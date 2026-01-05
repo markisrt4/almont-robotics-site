@@ -1,0 +1,23 @@
+---
+const links = [
+  { href: "/", label: "Home" },
+  { href: "/about/", label: "About" },
+  { href: "/robots/", label: "Robots" },
+  { href: "/media/", label: "Media" },
+  { href: "/sponsors/", label: "Sponsors" },
+  { href: "/contact/", label: "Contact" }
+];
+---
+<header class="nav">
+  <div class="container nav-inner">
+    <a class="brand" href={import.meta.env.BASE_URL}>
+      <div class="title">Almont Robotics</div>
+      <div class="sub">FRC 4961</div>
+    </a>
+    <nav class="navlinks" aria-label="Primary">
+      {links.map(l => (
+        <a href={l.href}>{l.label}</a>
+      ))}
+    </nav>
+  </div>
+</header>

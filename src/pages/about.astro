@@ -1,0 +1,53 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+<BaseLayout
+  title="About"
+  description="About Almont Robotics (FRC 4961) — a student-led FIRST Robotics Competition team."
+>
+  <section class="section">
+    <div class="container">
+      <div class="kicker">About</div>
+      <h1 class="h1">Almont Robotics <span class="accent">FRC 4961</span></h1>
+      <p class="p" style="max-width: 70ch;">
+        Team 4961 is entirely student-led, with every design, build, and decision being made by our team's members.
+        From brainstorming to building, the Almont Robotics Team runs on student ideas, creativity, and problem-solving.
+      </p>
+
+      <div class="hr"></div>
+
+      <div class="grid3">
+        <div class="card" style="padding:1.15rem;">
+          <div class="kicker" style="color:rgba(245,104,15,.95);">Student-led</div>
+          <p class="p">Students plan, prototype, build, test, iterate, and present—learning leadership along the way.</p>
+        </div>
+        <div class="card" style="padding:1.15rem;">
+          <div class="kicker" style="color:rgba(65,154,67,.95);">Hands-on STEM</div>
+          <p class="p">CAD, machining, wiring, code, strategy, media, and outreach—there’s a role for everyone.</p>
+        </div>
+        <div class="card" style="padding:1.15rem;">
+          <div class="kicker">Gracious Professionalism</div>
+          <p class="p">We compete hard, help others, and represent Almont with respect and pride.</p>
+        </div>
+      </div>
+
+      <div style="margin-top:1.2rem;" class="card">
+        <div style="display:grid; grid-template-columns: 1.2fr .8fr; gap:1rem; padding:1rem;">
+          <div>
+            <h2 class="h2" style="margin-top:.15rem;">Our slogan</h2>
+            <p class="p" style="font-size:1.15rem; color:rgba(255,255,255,.86);">
+              “Student-driven. Student-built. Team-powered.”
+            </p>
+            <div class="btnrow">
+              <a class="btn primary" href="/contact/">How to Join</a>
+              <a class="btn" href="/sponsors/">Sponsor Us</a>
+            </div>
+          </div>
+          <div class="tile" style="border-radius: var(--radius);">
+            <img src="/photos/208A3511.jpg" alt="Student in the pits giving thumbs up" loading="lazy" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

@@ -1,0 +1,50 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+<BaseLayout title="Sponsors" description="Support Almont Robotics (FRC 4961).">
+  <section class="section">
+    <div class="container">
+      <div class="kicker">Sponsors</div>
+      <h1 class="h1">Fuel the build. <span class="accent">Power the team.</span></h1>
+      <p class="p" style="max-width: 75ch;">
+        Sponsorships help cover parts, tools, event fees, travel, and outreach. Every contribution directly supports student learning.
+      </p>
+
+      <div class="btnrow">
+        <a class="btn primary" href="/contact/">Contact us to sponsor</a>
+        <a class="btn" href="/about/">Learn about the team</a>
+      </div>
+
+      <div class="hr"></div>
+
+      <div class="grid3">
+        <div class="card" style="padding:1.15rem;">
+          <div class="kicker" style="color:rgba(245,104,15,.95);">Gold</div>
+          <p class="p">Top-tier recognition on the site + robot + pit (customize your tiers).</p>
+        </div>
+        <div class="card" style="padding:1.15rem;">
+          <div class="kicker" style="color:rgba(65,154,67,.95);">Silver</div>
+          <p class="p">Logo placement + social shout-outs (customize your tiers).</p>
+        </div>
+        <div class="card" style="padding:1.15rem;">
+          <div class="kicker">Bronze</div>
+          <p class="p">Supporter listing on the site (customize your tiers).</p>
+        </div>
+      </div>
+
+      <div style="margin-top:1.2rem;" class="card">
+        <div style="padding:1.15rem;">
+          <h2 class="h2">Sponsor logos</h2>
+          <p class="p">Add logos in <code style="color:var(--muted);">public/sponsors/</code> and list them here.</p>
+          <div style="display:grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap:.9rem; margin-top:1rem;">
+            {[1,2,3,4].map(() => (
+              <div class="tile" style="display:flex;align-items:center;justify-content:center;aspect-ratio: 3/2;">
+                <span style="color:rgba(255,255,255,.55);">Logo</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

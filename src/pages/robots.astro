@@ -1,0 +1,32 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+<BaseLayout title="Robots" description="Robots built by Almont Robotics (FRC 4961).">
+  <section class="section">
+    <div class="container">
+      <div class="kicker">Robots</div>
+      <h1 class="h1">Built by students. <span class="accent">Driven to compete.</span></h1>
+      <p class="p" style="max-width: 75ch;">
+        This page is ready for yearly robot write-ups. Add a new section for each season with photos, features, and awards.
+      </p>
+
+      <div class="hr"></div>
+
+      <div class="card" style="padding:1.15rem;">
+        <h2 class="h2">2025 Season</h2>
+        <p class="p">Add your robot name, game, and highlights here (autonomous, scoring, climb, etc.).</p>
+        <div class="gallery" style="margin-top:1rem;">
+          <div class="tile" style="grid-column: span 6;"><img src="/photos/208A3552.jpg" alt="Robot in the pits" loading="lazy" /></div>
+          <div class="tile" style="grid-column: span 6;"><img src="/photos/208A3588.jpg" alt="Robot at event" loading="lazy" /></div>
+        </div>
+      </div>
+
+      <div style="height:1rem;"></div>
+
+      <div class="card" style="padding:1.15rem;">
+        <h2 class="h2">2024 Season</h2>
+        <p class="p">Add photos + a short story: what worked, what you improved, what you learned.</p>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

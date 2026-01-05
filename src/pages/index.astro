@@ -1,0 +1,103 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+const heroPhoto = "/photos/208A3608.jpg";
+---
+<BaseLayout
+  title="Home"
+  description="Almont Robotics (FRC 4961) — student-led FIRST Robotics Competition team."
+>
+  <section class="hero">
+    <div class="hero-bg" style={`background-image:url(${heroPhoto});`}></div>
+    <div class="hero-overlay"></div>
+
+    <div class="container hero-inner">
+      <div class="hero-card">
+        <div class="badge">Almont Robotics <span style="opacity:.5;">•</span> FRC 4961</div>
+        <h1 class="h1">
+          <span class="accent">Student-driven.</span> Student-built. <span class="accent">Team-powered.</span>
+        </h1>
+        <p class="p">
+          Team 4961 is entirely student-led — every design, build, and decision is made by our members.
+          From brainstorming to building, we run on student ideas, creativity, and problem-solving.
+        </p>
+
+        <div class="btnrow">
+          <a class="btn primary" href="/sponsors/">Become a Sponsor</a>
+          <a class="btn" href="/contact/">Join the Team</a>
+          <a class="btn" href="/media/">View Photos</a>
+        </div>
+
+        <div class="hero-stats" aria-label="Quick links">
+          <div class="stat">
+            <div class="num" style="color:var(--orange);">FRC</div>
+            <div class="label">FIRST Robotics Competition</div>
+          </div>
+          <div class="stat">
+            <div class="num" style="color:var(--green);">4961</div>
+            <div class="label">Team Number</div>
+          </div>
+          <div class="stat">
+            <div class="num">Almont, MI</div>
+            <div class="label">Community • STEM • Outreach</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="head">
+        <div>
+          <div class="kicker">What we do</div>
+          <h2 class="h2">Build robots. Build skills. Build people.</h2>
+        </div>
+      </div>
+
+      <div class="grid3">
+        <div class="card" style="padding:1.15rem 1.15rem 1.05rem;">
+          <div class="kicker" style="color:rgba(245,104,15,.9);">Design + Build</div>
+          <p class="p">Mechanical, electrical, CAD, fabrication, and rapid iteration under real deadlines.</p>
+        </div>
+        <div class="card" style="padding:1.15rem 1.15rem 1.05rem;">
+          <div class="kicker" style="color:rgba(65,154,67,.95);">Programming</div>
+          <p class="p">Control systems, autonomous routines, and driver-focused software improvements.</p>
+        </div>
+        <div class="card" style="padding:1.15rem 1.15rem 1.05rem;">
+          <div class="kicker">Community</div>
+          <p class="p">Outreach, mentoring, sponsorships, and representing Almont with pride.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top:0;">
+    <div class="container">
+      <div class="head">
+        <div>
+          <div class="kicker">From the pits</div>
+          <h2 class="h2">Recent moments</h2>
+        </div>
+        <a class="btn" href="/media/">See full gallery</a>
+      </div>
+
+      <div class="gallery">
+        <div class="tile" style="grid-column: span 7;">
+          <img src="/photos/208A3547.jpg" alt="Team photo at event" loading="lazy" />
+        </div>
+        <div class="tile" style="grid-column: span 5;">
+          <img src="/photos/208A3531.jpg" alt="Students at competition" loading="lazy" />
+        </div>
+        <div class="tile" style="grid-column: span 4;">
+          <img src="/photos/208A3552.jpg" alt="Working with robot" loading="lazy" />
+        </div>
+        <div class="tile" style="grid-column: span 4;">
+          <img src="/photos/208A3588.jpg" alt="Robot in pit" loading="lazy" />
+        </div>
+        <div class="tile" style="grid-column: span 4;">
+          <img src="/photos/208A3581.jpg" alt="Students at competition" loading="lazy" />
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

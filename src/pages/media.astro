@@ -1,0 +1,29 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+const photos = [
+  "208A3608.jpg","208A3547.jpg","208A3531.jpg","208A3552.jpg","208A3588.jpg",
+  "208A3581.jpg","208A3570.jpg","208A3617.jpg","208A3528.jpg","208A3511.jpg"
+].map(f => `/photos/${f}`);
+---
+<BaseLayout title="Media" description="Photos from Almont Robotics (FRC 4961).">
+  <section class="section">
+    <div class="container">
+      <div class="kicker">Media</div>
+      <h1 class="h1">Pits, practice, and <span class="accent">competition.</span></h1>
+      <p class="p" style="max-width: 75ch;">
+        Drop more images into <code style="color:var(--muted);">public/photos/</code> and add filenames in
+        <code style="color:var(--muted);">src/pages/media.astro</code>.
+      </p>
+
+      <div class="hr"></div>
+
+      <div class="gallery">
+        {photos.map((src, idx) => (
+          <div class="tile" style={`grid-column: span ${idx % 7 === 0 ? 7 : 5};`}>
+            <img src={src} alt="Team photo" loading="lazy" />
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+</BaseLayout>
