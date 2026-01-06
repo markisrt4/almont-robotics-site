@@ -1,6 +1,8 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+const base = import.meta.env.BASE_URL;
 ---
+
 <BaseLayout
   title="About"
   description="About Almont Robotics (FRC 4961) — a student-led FIRST Robotics Competition team."
@@ -9,6 +11,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
     <div class="container">
       <div class="kicker">About</div>
       <h1 class="h1">Almont Robotics <span class="accent">FRC 4961</span></h1>
+
       <p class="p" style="max-width: 70ch;">
         Team 4961 is entirely student-led, with every design, build, and decision being made by our team's members.
         From brainstorming to building, the Almont Robotics Team runs on student ideas, creativity, and problem-solving.
@@ -39,12 +42,13 @@ import BaseLayout from "../layouts/BaseLayout.astro";
               “Student-driven. Student-built. Team-powered.”
             </p>
             <div class="btnrow">
-              <a class="btn primary" href="/contact/">How to Join</a>
-              <a class="btn" href="/sponsors/">Sponsor Us</a>
+              <a class="btn primary" href={`${base}contact/`}>How to Join</a>
+              <a class="btn" href={`${base}sponsors/`}>Sponsor Us</a>
             </div>
           </div>
+
           <div class="tile" style="border-radius: var(--radius);">
-            <img src="/photos/208A3511.jpg" alt="Student in the pits giving thumbs up" loading="lazy" />
+            <img src={`${base}photos/208A3511.jpg`} alt="Student in the pits giving thumbs up" loading="lazy" />
           </div>
         </div>
       </div>
