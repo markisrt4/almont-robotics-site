@@ -3,8 +3,24 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 const base = import.meta.env.BASE_URL;
 
 const photos = [
-  "208A3608.jpg","208A3547.jpg","208A3531.jpg","208A3552.jpg","208A3588.jpg",
-  "208A3581.jpg","208A3570.jpg","208A3617.jpg","208A3528.jpg","208A3511.jpg"
+  // Original DSLR set
+  "208A3511.jpg","208A3528.jpg","208A3531.jpg","208A3547.jpg","208A3552.jpg",
+  "208A3570.jpg","208A3581.jpg","208A3588.jpg","208A3608.jpg","208A3617.jpg",
+  "208A3620.jpg","208A3623.jpg","208A3628.jpg","208A3633.jpg","208A3638.jpg",
+  "208A3642.jpg","208A3645.jpg","208A3648.jpg","208A3662.jpg","208A3676.jpg",
+  "208A3688.jpg","208A3690.jpg","208A3691.jpg","208A3704.jpg","208A3715.jpg",
+
+  // Phone photos
+  "IMG_0001.jpg","IMG_0002.jpg","IMG_0005.jpg","IMG_0050.jpg",
+  "IMG_9962.jpg","IMG_9977.jpg","IMG_9989.jpg","IMG_9992.jpg",
+  "IMG_9994.jpg","IMG_9996.jpg",
+
+  // Shared album PNGs (spaces are OK in JS strings)
+  "SHHS Comp-6.png","SHHS Comp-7.png","SHHS Comp-9.png","SHHS Comp-10.png",
+  "SHHS Comp-11.png","SHHS Comp-22.png","SHHS Comp-24.png","SHHS Comp-40.png",
+  "SHHS Comp-41.png","SHHS Comp-42.png","SHHS Comp-43.png","SHHS Comp-44.png",
+  "SHHS Comp-46.png","SHHS Comp-50.png","SHHS Comp-52.png","SHHS Comp-56.png",
+  "SHHS Comp-66.png","SHHS Comp-71.png","SHHS Comp-77.png","SHHS Comp-85.png"
 ].map(f => `${base}photos/${f}`);
 ---
 
@@ -12,19 +28,27 @@ const photos = [
   <section class="section">
     <div class="container">
       <div class="kicker">Media</div>
-      <h1 class="h1">Pits, practice, and <span class="accent">competition.</span></h1>
+      <h1 class="h1">
+        Competition, pits, and <span class="accent">team moments.</span>
+      </h1>
 
       <p class="p" style="max-width: 75ch;">
-        Drop more images into <code style="color:var(--muted);">public/photos/</code> and add filenames in
-        <code style="color:var(--muted);">src/pages/media.astro</code>.
+        Highlights from competitions, build season, and team events.
       </p>
 
       <div class="hr"></div>
 
       <div class="gallery">
         {photos.map((src, idx) => (
-          <div class="tile" style={`grid-column: span ${idx % 7 === 0 ? 7 : 5};`}>
-            <img src={src} alt="Team photo" loading="lazy" />
+          <div
+            class="tile"
+            style={`grid-column: span ${idx % 7 === 0 ? 7 : 5};`}
+          >
+            <img
+              src={src}
+              alt="Almont Robotics team photo"
+              loading="lazy"
+            />
           </div>
         ))}
       </div>
