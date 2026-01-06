@@ -1,57 +1,208 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import fs from "node:fs";
+import path from "node:path";
+import exifr from "exifr";
+
 const base = import.meta.env.BASE_URL;
 
-const photos = [
-  // Original DSLR set
-  "208A3511.jpg","208A3528.jpg","208A3531.jpg","208A3547.jpg","208A3552.jpg",
-  "208A3570.jpg","208A3581.jpg","208A3588.jpg","208A3608.jpg","208A3617.jpg",
-  "208A3620.jpg","208A3623.jpg","208A3628.jpg","208A3633.jpg","208A3638.jpg",
-  "208A3642.jpg","208A3645.jpg","208A3648.jpg","208A3662.jpg","208A3676.jpg",
-  "208A3688.jpg","208A3690.jpg","208A3691.jpg","208A3704.jpg","208A3715.jpg",
+const PHOTOS_DIR = path.resolve(process.cwd(), "public", "photos");
 
-  // Phone photos
-  "IMG_0001.jpg","IMG_0002.jpg","IMG_0005.jpg","IMG_0050.jpg",
-  "IMG_9962.jpg","IMG_9977.jpg","IMG_9989.jpg","IMG_9992.jpg",
-  "IMG_9994.jpg","IMG_9996.jpg",
+const isImage = (name) => /\.(jpe?g|png|webp)$/i.test(name);
+const encodeFile = (name) => encodeURIComponent(name).replaceAll("%2F", "/");
 
-  // Shared album PNGs (spaces are OK in JS strings)
-  "SHHS-Comp-6.png","SHHS Comp-7.png","SHHS Comp-9.png","SHHS Comp-10.png",
-  "SHHS-Comp-11.png","SHHS Comp-22.png","SHHS Comp-24.png","SHHS Comp-40.png",
-  "SHHS-Comp-41.png","SHHS Comp-42.png","SHHS Comp-43.png","SHHS Comp-44.png",
-  "SHHS-Comp-46.png","SHHS Comp-50.png","SHHS Comp-52.png","SHHS Comp-56.png",
-  "SHHS-Comp-66.png","SHHS Comp-71.png","SHHS Comp-77.png","SHHS Comp-85.png"
-].map(f => `${base}photos/${f}`);
+const files = fs.existsSync(PHOTOS_DIR)
+  ? fs.readdirSync(PHOTOS_DIR).filter(isImage)
+  : [];
+
+// Read EXIF date (DateTimeOriginal) if available; fallback to file mtime.
+async function getPhotoMeta(filename) {
+  const fullPath = path.join(PHOTOS_DIR, filename);
+
+  let date = null;
+  try {
+    const exif = await exifr.parse(fullPath, { translateValues: true });
+    date = exif?.DateTimeOriginal || exif?.CreateDate || exif?.ModifyDate || null;
+    if (date && !(date instanceof Date)) date = new Date(date);
+  } catch {
+    // ignore EXIF parse errors
+  }
+
+  if (!date) {
+    const st = fs.statSync(fullPath);
+    date = st.mtime;
+  }
+
+  return {
+    filename,
+    url: `${base}photos/${encodeFile(filename)}`,
+    ts: date?.getTime?.() ?? 0
+  };
+}
+
+const photos = await Promise.all(files.map(getPhotoMeta));
+photos.sort((a, b) => b.ts - a.ts);
 ---
 
 <BaseLayout title="Media" description="Photos from Almont Robotics (FRC 4961).">
   <section class="section">
     <div class="container">
       <div class="kicker">Media</div>
-      <h1 class="h1">
-        Competition, pits, and <span class="accent">team moments.</span>
-      </h1>
-
+      <h1 class="h1">Competition, pits, and <span class="accent">team moments.</span></h1>
       <p class="p" style="max-width: 75ch;">
-        Highlights from competitions, build season, and team events.
+        Gallery auto-loads from <code style="color:var(--muted);">public/photos/</code> and sorts newest-first using EXIF (fallback to file date).
+        Tap a photo to view full-size.
       </p>
 
       <div class="hr"></div>
 
-      <div class="gallery">
-        {photos.map((src, idx) => (
-          <div
+      <div class="gallery" id="gallery">
+        {photos.map((p, idx) => (
+          <a
             class="tile"
+            href={p.url}
+            data-full={p.url}
+            data-index={idx}
             style={`grid-column: span ${idx % 7 === 0 ? 7 : 5};`}
           >
-            <img
-              src={src}
-              alt="Almont Robotics team photo"
-              loading="lazy"
-            />
-          </div>
+            <img src={p.url} alt="Almont Robotics team photo" loading="lazy" />
+          </a>
         ))}
       </div>
     </div>
   </section>
+
+  <!-- Lightbox -->
+  <div class="lb" id="lb" aria-hidden="true">
+    <button class="lb-close" id="lbClose" aria-label="Close">×</button>
+    <button class="lb-nav lb-prev" id="lbPrev" aria-label="Previous">‹</button>
+    <img class="lb-img" id="lbImg" alt="Expanded photo" />
+    <button class="lb-nav lb-next" id="lbNext" aria-label="Next">›</button>
+    <div class="lb-hint">Tap outside to close • Swipe/arrow keys to navigate</div>
+  </div>
+
+  <style>
+    .lb{
+      position:fixed; inset:0; z-index:999;
+      display:none;
+      background: rgba(0,0,0,.86);
+      backdrop-filter: blur(6px);
+      align-items:center; justify-content:center;
+      padding: 1rem;
+    }
+    .lb.open{ display:flex; }
+    .lb-img{
+      max-width: min(1100px, 94vw);
+      max-height: 86vh;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,.16);
+      box-shadow: 0 30px 90px rgba(0,0,0,.55);
+    }
+    .lb-close{
+      position:absolute; top:14px; right:14px;
+      width:44px; height:44px;
+      border-radius: 999px;
+      border:1px solid rgba(255,255,255,.18);
+      background: rgba(255,255,255,.06);
+      color: rgba(255,255,255,.92);
+      font-size: 28px;
+      line-height: 1;
+    }
+    .lb-nav{
+      position:absolute; top:50%;
+      transform: translateY(-50%);
+      width:44px; height:44px;
+      border-radius: 999px;
+      border:1px solid rgba(255,255,255,.18);
+      background: rgba(255,255,255,.06);
+      color: rgba(255,255,255,.92);
+      font-size: 34px;
+      line-height: 1;
+      display:flex; align-items:center; justify-content:center;
+    }
+    .lb-prev{ left: 14px; }
+    .lb-next{ right: 14px; }
+    .lb-hint{
+      position:absolute;
+      bottom: 14px;
+      left: 50%;
+      transform: translateX(-50%);
+      color: rgba(255,255,255,.70);
+      font-size: .95rem;
+      padding: .45rem .7rem;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.25);
+      text-align:center;
+    }
+    @media (max-width: 820px){
+      .lb-prev{ left: 10px; }
+      .lb-next{ right: 10px; }
+      .lb-hint{ max-width: 92vw; }
+    }
+  </style>
+
+  <script is:inline define:vars={{ photos: photos.map(p => p.url) }}>
+    const list = photos;
+    const lb = document.getElementById("lb");
+    const lbImg = document.getElementById("lbImg");
+    const lbClose = document.getElementById("lbClose");
+    const lbPrev = document.getElementById("lbPrev");
+    const lbNext = document.getElementById("lbNext");
+    const gallery = document.getElementById("gallery");
+
+    let idx = 0;
+
+    function openAt(i){
+      idx = (i + list.length) % list.length;
+      lbImg.src = list[idx];
+      lb.classList.add("open");
+      lb.setAttribute("aria-hidden", "false");
+      document.body.style.overflow = "hidden";
+    }
+    function close(){
+      lb.classList.remove("open");
+      lb.setAttribute("aria-hidden", "true");
+      document.body.style.overflow = "";
+      lbImg.src = "";
+    }
+    function prev(){ openAt(idx - 1); }
+    function next(){ openAt(idx + 1); }
+
+    gallery?.addEventListener("click", (e) => {
+      const a = e.target.closest("a[data-index]");
+      if(!a) return;
+      e.preventDefault();
+      openAt(parseInt(a.dataset.index, 10));
+    });
+
+    lbClose?.addEventListener("click", close);
+    lbPrev?.addEventListener("click", prev);
+    lbNext?.addEventListener("click", next);
+
+    lb?.addEventListener("click", (e) => {
+      if (e.target === lb) close();
+    });
+
+    window.addEventListener("keydown", (e) => {
+      if(!lb.classList.contains("open")) return;
+      if(e.key === "Escape") close();
+      if(e.key === "ArrowLeft") prev();
+      if(e.key === "ArrowRight") next();
+    });
+
+    // Simple swipe for mobile
+    let x0 = null;
+    lb?.addEventListener("touchstart", (e) => { x0 = e.touches?.[0]?.clientX ?? null; }, { passive: true });
+    lb?.addEventListener("touchend", (e) => {
+      if(x0 === null) return;
+      const x1 = e.changedTouches?.[0]?.clientX ?? x0;
+      const dx = x1 - x0;
+      x0 = null;
+      if(Math.abs(dx) > 40){
+        if(dx > 0) prev();
+        else next();
+      }
+    }, { passive: true });
+  </script>
 </BaseLayout>
