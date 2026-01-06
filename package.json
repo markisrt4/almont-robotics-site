@@ -9,6 +9,7 @@
     "preview": "astro preview"
   },
   "dependencies": {
-    "astro": "^4.15.6"
+    "astro": "^4.15.6",
+    "exifr": "^7.1.3"
   }
 }
