@@ -1,23 +1,129 @@
 ---
+const base = import.meta.env.BASE_URL;
+
 const links = [
-  { href: "/", label: "Home" },
-  { href: "/about/", label: "About" },
-  { href: "/robots/", label: "Robots" },
-  { href: "/media/", label: "Media" },
-  { href: "/sponsors/", label: "Sponsors" },
-  { href: "/contact/", label: "Contact" }
+  { href: "", label: "Home" },
+  { href: "about/", label: "About" },
+  { href: "robots/", label: "Robots" },
+  { href: "media/", label: "Media" },
+  { href: "sponsors/", label: "Sponsors" },
+  { href: "contact/", label: "Contact" }
 ];
 ---
+
 <header class="nav">
   <div class="container nav-inner">
-    <a class="brand" href={import.meta.env.BASE_URL}>
+    <!-- Brand -->
+    <a class="brand" href={`${base}`}>
       <div class="title">Almont Robotics</div>
       <div class="sub">FRC 4961</div>
     </a>
-    <nav class="navlinks" aria-label="Primary">
+
+    <!-- Desktop Nav -->
+    <nav class="navlinks desktop" aria-label="Primary navigation">
       {links.map(l => (
-        <a href={l.href}>{l.label}</a>
+        <a href={`${base}${l.href}`}>{l.label}</a>
       ))}
     </nav>
+
+    <!-- Mobile Menu Button -->
+    <button
+      class="menu-btn"
+      aria-label="Open menu"
+      onclick="this.parentElement.classList.toggle('open')"
+    >
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
   </div>
+
+  <!-- Mobile Menu -->
+  <nav class="mobile-menu" aria-label="Mobile navigation">
+    {links.map(l => (
+      <a
+        href={`${base}${l.href}`}
+        onclick="this.closest('.nav').classList.remove('open')"
+      >
+        {l.label}
+      </a>
+    ))}
+  </nav>
 </header>
+
+<style>
+/* ---------- Desktop ---------- */
+.nav-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.navlinks.desktop {
+  display: flex;
+  gap: 0.75rem;
+}
+
+/* ---------- Mobile ---------- */
+.menu-btn {
+  display: none;
+  background: none;
+  border: 0;
+  padding: 0.35rem;
+  cursor: pointer;
+}
+
+.menu-btn span {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background: rgba(255,255,255,.85);
+  margin: 4px 0;
+  transition: transform .2s ease, opacity .2s ease;
+}
+
+/* Mobile menu panel */
+.mobile-menu {
+  display: none;
+  flex-direction: column;
+  gap: .35rem;
+  padding: .75rem 1rem 1rem;
+  background: rgba(7,9,7,.92);
+  border-top: 1px solid rgba(255,255,255,.08);
+}
+
+.mobile-menu a {
+  padding: .6rem .75rem;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,.08);
+  background: rgba(255,255,255,.04);
+  font-weight: 600;
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 820px) {
+  .navlinks.desktop {
+    display: none;
+  }
+
+  .menu-btn {
+    display: block;
+  }
+
+  .nav.open .mobile-menu {
+    display: flex;
+  }
+
+  /* Animate hamburger into X */
+  .nav.open .menu-btn span:nth-child(1) {
+    transform: translateY(6px) rotate(45deg);
+  }
+  .nav.open .menu-btn span:nth-child(2) {
+    opacity: 0;
+  }
+  .nav.open .menu-btn span:nth-child(3) {
+    transform: translateY(-6px) rotate(-45deg);
+  }
+}
+</style>
