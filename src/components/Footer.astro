@@ -1,12 +1,98 @@
+---
+const base = import.meta.env.BASE_URL;
+
+const footerLinks = [
+  { href: "calendar/", label: "Calendar" },
+  { href: "contact/", label: "Contact" },
+  { href: "sponsors/", label: "Sponsors" },
+];
+---
+
 <footer class="footer">
   <div class="container">
-    <div style="display:flex; flex-wrap:wrap; gap:.7rem; align-items:center; justify-content:space-between;">
-      <div>© {new Date().getFullYear()} Almont Robotics — FRC 4961</div>
-      <div class="badge">
-        <span style="width:.55rem;height:.55rem;border-radius:99px;background:var(--orange);display:inline-block;"></span>
-        <span style="width:.55rem;height:.55rem;border-radius:99px;background:var(--green);display:inline-block;"></span>
+    <div class="footer-inner">
+      <div class="left">
+        <div>© {new Date().getFullYear()} Almont Robotics — FRC 4961</div>
+
+        <nav class="footer-links" aria-label="Footer links">
+          {footerLinks.map((l) => (
+            <a href={`${base}${l.href}`}>{l.label}</a>
+          ))}
+        </nav>
+      </div>
+
+      <div class="badge" aria-label="Team slogan">
+        <span class="dot orange"></span>
+        <span class="dot green"></span>
         <span>Student-driven. Student-built. Team-powered.</span>
       </div>
     </div>
   </div>
+
+  <style>
+    .footer-inner{
+      display:flex;
+      flex-wrap:wrap;
+      gap:.85rem;
+      align-items:center;
+      justify-content:space-between;
+    }
+
+    .left{
+      display:flex;
+      flex-direction:column;
+      gap:.45rem;
+      min-width: 260px;
+    }
+
+    .footer-links{
+      display:flex;
+      flex-wrap:wrap;
+      gap:.5rem;
+      align-items:center;
+    }
+
+    .footer-links a{
+      text-decoration:none;
+      color: rgba(255,255,255,.82);
+      font-weight: 800;
+      padding: .35rem .55rem;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.03);
+      transition: transform .14s ease, border-color .14s ease, background .14s ease;
+      white-space: nowrap;
+    }
+
+    .footer-links a:hover{
+      transform: translateY(-1px);
+      background: rgba(255,255,255,.06);
+      border-color: rgba(245,104,15,.45);
+    }
+
+    .badge{
+      display:flex;
+      gap:.55rem;
+      align-items:center;
+      padding:.45rem .65rem;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.03);
+      color: rgba(255,255,255,.86);
+      font-weight: 800;
+    }
+
+    .dot{
+      width:.55rem;
+      height:.55rem;
+      border-radius:99px;
+      display:inline-block;
+    }
+    .dot.orange{ background: var(--orange); }
+    .dot.green{ background: var(--green); }
+
+    @media (prefers-reduced-motion: reduce){
+      .footer-links a{ transition:none !important; }
+    }
+  </style>
 </footer>
