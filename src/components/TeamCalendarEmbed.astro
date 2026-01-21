@@ -1,0 +1,114 @@
+---
+/**
+ * Teamup public link (view-only)
+ * You can swap this later to a ks... link if you find it.
+ */
+const calendarUrl = "https://teamup.com/c/2898td/";
+
+/** Optional: if you want a dark-mode friendly title */
+const title = "FRC 4961 Team Calendar";
+---
+
+<section class="cal-wrap">
+  <div class="cal-card">
+    <div class="cal-header">
+      <h2>{title}</h2>
+      <div class="cal-actions">
+        <a class="btn" href={calendarUrl} target="_blank" rel="noreferrer">Open full screen</a>
+      </div>
+    </div>
+
+    <div class="cal-frame">
+      <iframe
+        src={calendarUrl}
+        title={title}
+        loading="lazy"
+        referrerpolicy="no-referrer"
+      ></iframe>
+    </div>
+  </div>
+</section>
+
+<style>
+/* If you already have CSS variables for team colors, swap these to var(--frc-orange) etc. */
+:global(:root) {
+  --frc-orange: #F5680F;
+  --frc-green: #419A43;
+  --frc-black: #0b0b0d;
+  --frc-surface: rgba(255,255,255,0.06);
+  --frc-border: rgba(255,255,255,0.14);
+  --frc-text: rgba(255,255,255,0.92);
+  --frc-muted: rgba(255,255,255,0.70);
+}
+
+.cal-wrap {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+.cal-card {
+  border: 1px solid var(--frc-border);
+  background: linear-gradient(180deg, rgba(245,104,15,0.08), rgba(65,154,67,0.05));
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.35);
+}
+
+.cal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1rem 0.75rem;
+  border-bottom: 1px solid rgba(255,255,255,0.10);
+  backdrop-filter: blur(8px);
+}
+
+.cal-header h2 {
+  margin: 0;
+  font-size: 1.05rem;
+  letter-spacing: 0.2px;
+  color: var(--frc-text);
+}
+
+.cal-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.55rem 0.8rem;
+  border-radius: 12px;
+  text-decoration: none;
+  color: var(--frc-text);
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.14);
+  font-weight: 700;
+  font-size: 0.92rem;
+  transition: transform 140ms ease, background 140ms ease, border-color 140ms ease;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+  background: rgba(255,255,255,0.11);
+  border-color: rgba(245,104,15,0.45);
+}
+
+.cal-frame {
+  /* Responsive height without JS */
+  height: clamp(640px, 80vh, 920px);
+  background: rgba(0,0,0,0.25);
+}
+
+.cal-frame iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
+}
+</style>
