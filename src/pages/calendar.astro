@@ -1,14 +1,15 @@
 ---
-import Layout from "../layouts/BaseLayout.astro";
-import TeamCalendar from "../components/TeamCalendar.astro";
+import TeamCalendarEmbed from "../components/TeamCalendarEmbed.astro";
+import Layout from "../layouts/Layout.astro"; // adjust to your layout path/name
 ---
 
-<Layout title="Team Calendar">
-  <h1>Team Calendar</h1>
-  <p>
-    Meetings, competitions, outreach events, and deadlines for
-    FRC Team 4961 - Almont.
-  </p>
+<Layout title="Calendar">
+  <header style="max-width:1180px;margin:0 auto;padding:1rem;">
+    <h1 style="margin:0;color:rgba(255,255,255,.92);">Team Calendar</h1>
+    <p style="margin:.35rem 0 0;color:rgba(255,255,255,.70);">
+      Meetings, events, competitions, outreach, and deadlines.
+    </p>
+  </header>
 
-  <TeamCalendar />
+  <TeamCalendarEmbed />
 </Layout>
