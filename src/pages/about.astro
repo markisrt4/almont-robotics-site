@@ -1,57 +1,177 @@
 ---
-import BaseLayout from "../layouts/BaseLayout.astro";
-const base = import.meta.env.BASE_URL;
+import Layout from "../layouts/BaseLayout.astro";
+import NextEvents from "../components/NextEvents.astro";
+import CalendarActions from "../components/CalendarActions.astro";
+import TeamCalendarEmbed from "../components/TeamCalendarEmbed.astro";
 ---
 
-<BaseLayout
-  title="About"
-  description="About Almont Robotics (FRC 4961) — a student-led FIRST Robotics Competition team."
+<Layout
+  title="Calendar"
+  description="Meetings, competitions, outreach, and deadlines for Almont Robotics FRC Team 4961."
 >
-  <section class="section">
-    <div class="container">
-      <div class="kicker">About</div>
-      <h1 class="h1">Almont Robotics <span class="accent">FRC 4961</span></h1>
-
-      <p class="p" style="max-width: 70ch;">
-        Team 4961 is entirely student-led, with every design, build, and decision being made by our team's members.
-        From brainstorming to building, the Almont Robotics Team runs on student ideas, creativity, and problem-solving.
-      </p>
-
-      <div class="hr"></div>
-
-      <div class="grid3">
-        <div class="card" style="padding:1.15rem;">
-          <div class="kicker" style="color:rgba(245,104,15,.95);">Student-led</div>
-          <p class="p">Students plan, prototype, build, test, iterate, and present—learning leadership along the way.</p>
-        </div>
-        <div class="card" style="padding:1.15rem;">
-          <div class="kicker" style="color:rgba(65,154,67,.95);">Hands-on STEM</div>
-          <p class="p">CAD, machining, wiring, code, strategy, media, and outreach—there’s a role for everyone.</p>
-        </div>
-        <div class="card" style="padding:1.15rem;">
-          <div class="kicker">Gracious Professionalism</div>
-          <p class="p">We compete hard, help others, and represent Almont with respect and pride.</p>
-        </div>
+  <section class="hero">
+    <div class="hero-card">
+      <div class="badge">
+        <span class="dot orange"></span>
+        <span class="dot green"></span>
+        <span class="badge-text">FRC 4961 • Team Schedule</span>
       </div>
 
-      <div style="margin-top:1.2rem;" class="card">
-        <div style="display:grid; grid-template-columns: 1.2fr .8fr; gap:1rem; padding:1rem;">
-          <div>
-            <h2 class="h2" style="margin-top:.15rem;">Our slogan</h2>
-            <p class="p" style="font-size:1.15rem; color:rgba(255,255,255,.86);">
-              “Student-driven. Student-built. Team-powered.”
-            </p>
-            <div class="btnrow">
-              <a class="btn primary" href={`${base}contact/`}>How to Join</a>
-              <a class="btn" href={`${base}sponsors/`}>Sponsor Us</a>
-            </div>
-          </div>
+      <h1>Team Calendar</h1>
+      <p>
+        Meetings, competitions, outreach events, and important deadlines — kept up to date in Teamup.
+      </p>
 
-          <div class="tile" style="border-radius: var(--radius);">
-            <img src={`${base}photos/208A3511.jpg`} alt="Student in the pits giving thumbs up" loading="lazy" />
-          </div>
-        </div>
+      <div class="hero-actions">
+        <a class="hero-btn primary" href="/calendar">View on this page</a>
+        <a
+          class="hero-btn"
+          href="https://teamup.com/ksd5jvzz4ymmpkwusk"
+          target="_blank"
+          rel="noreferrer"
+        >
+          Open full screen
+        </a>
       </div>
     </div>
   </section>
-</BaseLayout>
+
+  <div class="content">
+    <NextEvents />
+    <CalendarActions />
+    <TeamCalendarEmbed />
+  </div>
+
+  <style>
+    /* Themed accents (matches your orange/green vars if present) */
+    :global(:root){
+      --frc-orange: var(--orange, #F5680F);
+      --frc-green:  var(--green,  #419A43);
+    }
+
+    .content{
+      padding-bottom: 1.25rem;
+    }
+
+    .hero{
+      max-width: 1180px;
+      margin: 0.75rem auto 0;
+      padding: 0 1rem 0.25rem;
+    }
+
+    .hero-card{
+      position: relative;
+      overflow: hidden;
+      border-radius: 22px;
+      border: 1px solid rgba(255,255,255,.10);
+      background:
+        radial-gradient(900px 240px at 15% 0%, rgba(245,104,15,.22), transparent 55%),
+        radial-gradient(900px 240px at 85% 0%, rgba(65,154,67,.18), transparent 55%),
+        rgba(255,255,255,.04);
+      box-shadow: 0 18px 48px rgba(0,0,0,.40);
+      padding: 1.15rem 1.15rem 1rem;
+    }
+
+    /* subtle animated “glow sweep” */
+    .hero-card::after{
+      content:"";
+      position:absolute;
+      inset:-40%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,.08), transparent);
+      transform: translateX(-35%) rotate(12deg);
+      opacity: .35;
+      pointer-events:none;
+    }
+    @media (prefers-reduced-motion: no-preference){
+      .hero-card::after{
+        animation: sweep 7s ease-in-out infinite;
+      }
+      @keyframes sweep{
+        0%   { transform: translateX(-40%) rotate(12deg); opacity:.10; }
+        50%  { transform: translateX(40%)  rotate(12deg); opacity:.45; }
+        100% { transform: translateX(-40%) rotate(12deg); opacity:.10; }
+      }
+    }
+
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:.55rem;
+      padding: .45rem .7rem;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(7,9,7,.55);
+      color: rgba(255,255,255,.82);
+      font-weight: 900;
+      letter-spacing: .2px;
+      margin-bottom: .75rem;
+      backdrop-filter: blur(8px);
+    }
+    .dot{
+      width:.55rem;
+      height:.55rem;
+      border-radius: 999px;
+      display:inline-block;
+      box-shadow: 0 0 0 4px rgba(255,255,255,.04);
+    }
+    .dot.orange{ background: var(--frc-orange); }
+    .dot.green{ background: var(--frc-green); }
+    .badge-text{ font-size: .9rem; }
+
+    .hero-card h1{
+      margin: 0;
+      color: rgba(255,255,255,.96);
+      letter-spacing: .2px;
+      font-size: clamp(1.55rem, 2.3vw, 2.1rem);
+      line-height: 1.05;
+    }
+
+    .hero-card p{
+      margin: .55rem 0 0;
+      color: rgba(255,255,255,.74);
+      font-weight: 700;
+      max-width: 68ch;
+    }
+
+    .hero-actions{
+      display:flex;
+      flex-wrap:wrap;
+      gap:.6rem;
+      margin-top: .95rem;
+    }
+
+    .hero-btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      padding: .7rem 1rem;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.05);
+      color: rgba(255,255,255,.94);
+      text-decoration:none;
+      font-weight: 900;
+      transition: transform .14s ease, border-color .14s ease, background .14s ease, box-shadow .14s ease;
+    }
+    .hero-btn:hover{
+      transform: translateY(-1px);
+      background: rgba(255,255,255,.07);
+      border-color: rgba(245,104,15,.45);
+      box-shadow: 0 14px 32px rgba(0,0,0,.28);
+    }
+
+    .hero-btn.primary{
+      border-color: rgba(245,104,15,.55);
+      background: linear-gradient(180deg, rgba(245,104,15,.22), rgba(65,154,67,.10));
+    }
+    .hero-btn.primary:hover{
+      border-color: rgba(65,154,67,.55);
+    }
+
+    @media (max-width: 560px){
+      .hero-card{ padding: 1rem; }
+      .hero-actions{ width: 100%; }
+      .hero-btn{ flex: 1; }
+    }
+  </style>
+</Layout>
