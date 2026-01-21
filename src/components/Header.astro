@@ -8,8 +8,20 @@ const links = [
   { href: "robots/", label: "Robots" },
   { href: "media/", label: "Media" },
   { href: "sponsors/", label: "Sponsors" },
-  { href: "contact/", label: "Contact" }
+  { href: "contact/", label: "Contact" },
 ];
+
+// Normalize BASE_URL + pathname so "active" works on GitHub Pages subpaths too.
+const basePath = base.endsWith("/") ? base : `${base}/`;
+const path = Astro.url.pathname; // e.g. "/frc4961/calendar/" or "/calendar/"
+
+const isActive = (href: string) => {
+  // Build the expected pathname for this link
+  const full = new URL(href, `https://x.invalid${basePath}`).pathname; // ensures proper joining
+  // Treat home as active only on the exact basePath (not on every page)
+  if (href === "") return path === basePath;
+  return path === full;
+};
 ---
 
 <header class="nav" id="site-nav">
@@ -22,8 +34,10 @@ const links = [
 
     <!-- Desktop Nav -->
     <nav class="navlinks desktop" aria-label="Primary navigation">
-      {links.map(l => (
-        <a href={`${base}${l.href}`}>{l.label}</a>
+      {links.map((l) => (
+        <a href={`${base}${l.href}`} class:list={{ active: isActive(l.href) }}>
+          {l.label}
+        </a>
       ))}
     </nav>
 
@@ -34,7 +48,11 @@ const links = [
       aria-label="Open menu"
       aria-controls="mobile-menu"
       aria-expanded="false"
-      onclick="(function(btn){ const nav=document.getElementById('site-nav'); const open=nav.classList.toggle('open'); btn.setAttribute('aria-expanded', open ? 'true':'false'); })(this)"
+      onclick="(function(btn){
+        const nav=document.getElementById('site-nav');
+        const open=nav.classList.toggle('open');
+        btn.setAttribute('aria-expanded', open ? 'true':'false');
+      })(this)"
     >
       <span></span>
       <span></span>
@@ -44,10 +62,16 @@ const links = [
 
   <!-- Mobile Menu -->
   <nav class="mobile-menu" id="mobile-menu" aria-label="Mobile navigation">
-    {links.map(l => (
+    {links.map((l) => (
       <a
         href={`${base}${l.href}`}
-        onclick="(function(a){ const nav=a.closest('.nav'); nav.classList.remove('open'); const btn=nav.querySelector('.menu-btn'); if(btn) btn.setAttribute('aria-expanded','false'); })(this)"
+        class:list={{ active: isActive(l.href) }}
+        onclick="(function(a){
+          const nav=a.closest('.nav');
+          nav.classList.remove('open');
+          const btn=nav.querySelector('.menu-btn');
+          if(btn) btn.setAttribute('aria-expanded','false');
+        })(this)"
       >
         {l.label}
       </a>
@@ -55,21 +79,132 @@ const links = [
   </nav>
 
   <style>
-    .nav-inner { display:flex; align-items:center; justify-content:space-between; gap:1rem; }
+    /* --- Theme tokens (tweak if you already have CSS vars in global.css) --- */
+    :global(:root){
+      --frc-orange: #F5680F;
+      --frc-green:  #419A43;
+      --nav-bg: rgba(7,9,7,.78);
+      --nav-border: rgba(255,255,255,.10);
+      --nav-text: rgba(255,255,255,.92);
+      --nav-muted: rgba(255,255,255,.70);
+      --nav-card: rgba(255,255,255,.04);
+      --nav-card2: rgba(255,255,255,.06);
+    }
 
-    /* Desktop */
-    .navlinks.desktop { display:flex; gap:.75rem; align-items:center; }
+    /* Layout */
+    .nav{
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: var(--nav-bg);
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      backdrop-filter: blur(10px);
+    }
+
+    .nav-inner{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 1rem;
+      padding: .65rem 0;
+    }
+
+    /* Brand */
+    .brand{
+      display:flex;
+      flex-direction:column;
+      gap: .05rem;
+      text-decoration:none;
+      padding: .35rem .55rem;
+      border-radius: 14px;
+      border: 1px solid transparent;
+      transition: border-color .15s ease, transform .15s ease, background .15s ease;
+    }
+    .brand:hover{
+      transform: translateY(-1px);
+      background: rgba(255,255,255,.03);
+      border-color: rgba(245,104,15,.35);
+    }
+    .title{
+      font-weight: 900;
+      letter-spacing: .3px;
+      color: var(--nav-text);
+      line-height: 1.05;
+      font-size: 1.05rem;
+    }
+    .sub{
+      font-weight: 800;
+      color: var(--nav-muted);
+      font-size: .85rem;
+      letter-spacing: .4px;
+    }
+
+    /* Desktop nav */
+    .navlinks.desktop{
+      display:flex;
+      gap: .55rem;
+      align-items:center;
+    }
+
+    .navlinks a{
+      position: relative;
+      text-decoration:none;
+      color: var(--nav-text);
+      font-weight: 800;
+      padding: .55rem .75rem;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.10);
+      background: var(--nav-card);
+      transition:
+        transform .14s ease,
+        border-color .14s ease,
+        background .14s ease,
+        box-shadow .14s ease;
+      white-space: nowrap;
+    }
+
+    .navlinks a:hover{
+      transform: translateY(-1px);
+      background: var(--nav-card2);
+      border-color: rgba(245,104,15,.35);
+      box-shadow: 0 10px 26px rgba(0,0,0,.26);
+    }
+
+    /* Active state (orange ring + subtle green underglow) */
+    .navlinks a.active{
+      border-color: rgba(245,104,15,.55);
+      box-shadow:
+        0 0 0 3px rgba(245,104,15,.16),
+        0 18px 42px rgba(0,0,0,.30);
+      background: linear-gradient(180deg, rgba(245,104,15,.10), rgba(65,154,67,.06));
+    }
+    .navlinks a.active::after{
+      content:"";
+      position:absolute;
+      left: 12px;
+      right: 12px;
+      bottom: 6px;
+      height: 2px;
+      border-radius: 2px;
+      background: linear-gradient(90deg, rgba(245,104,15,.95), rgba(65,154,67,.85));
+      opacity: .9;
+    }
 
     /* Mobile */
     .menu-btn{
       display:none;
       background:none;
-      border:0;
-      padding:.35rem;
+      border: 1px solid rgba(255,255,255,.10);
+      padding: .45rem .55rem;
       cursor:pointer;
-      border-radius: 12px;
-      border:1px solid rgba(255,255,255,.10);
+      border-radius: 14px;
       background: rgba(255,255,255,.03);
+      transition: transform .15s ease, border-color .15s ease, background .15s ease;
+    }
+    .menu-btn:hover{
+      transform: translateY(-1px);
+      border-color: rgba(245,104,15,.35);
+      background: rgba(255,255,255,.05);
     }
     .menu-btn span{
       display:block;
@@ -83,20 +218,35 @@ const links = [
     .mobile-menu{
       display:none;
       flex-direction:column;
-      gap:.4rem;
+      gap: .45rem;
       padding: .75rem 1rem 1rem;
       background: rgba(7,9,7,.92);
-      border-top:1px solid rgba(255,255,255,.08);
-    }
-    .mobile-menu a{
-      padding:.75rem .85rem;
-      border-radius:14px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.04);
-      font-weight: 700;
-      color: rgba(255,255,255,.92);
+      border-top: 1px solid rgba(255,255,255,.08);
     }
 
+    .mobile-menu a{
+      text-decoration:none;
+      padding: .8rem .9rem;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.04);
+      font-weight: 800;
+      color: rgba(255,255,255,.92);
+      transition: transform .14s ease, border-color .14s ease, background .14s ease, box-shadow .14s ease;
+    }
+    .mobile-menu a:hover{
+      transform: translateY(-1px);
+      background: rgba(255,255,255,.06);
+      border-color: rgba(245,104,15,.35);
+      box-shadow: 0 10px 26px rgba(0,0,0,.26);
+    }
+    .mobile-menu a.active{
+      border-color: rgba(245,104,15,.55);
+      background: linear-gradient(180deg, rgba(245,104,15,.10), rgba(65,154,67,.06));
+      box-shadow: 0 0 0 3px rgba(245,104,15,.14);
+    }
+
+    /* Responsive behavior */
     @media (max-width: 820px){
       .navlinks.desktop{ display:none; }
       .menu-btn{ display:block; }
@@ -105,6 +255,19 @@ const links = [
       .nav.open .menu-btn span:nth-child(1){ transform: translateY(6px) rotate(45deg); }
       .nav.open .menu-btn span:nth-child(2){ opacity:0; }
       .nav.open .menu-btn span:nth-child(3){ transform: translateY(-6px) rotate(-45deg); }
+    }
+
+    /* Accessibility: reduce motion */
+    @media (prefers-reduced-motion: reduce){
+      .navlinks a,
+      .mobile-menu a,
+      .menu-btn,
+      .brand{
+        transition: none !important;
+      }
+      .menu-btn span{
+        transition: none !important;
+      }
     }
   </style>
 </header>
