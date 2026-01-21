@@ -194,3 +194,10 @@ img{ max-width:100%; height:auto; display:block; }
   width:100%; height:100%;
   object-fit:cover;
 }
+
+/* Active nav link */
+.navlinks a.active,
+.mobile-menu a.active{
+  border-color: rgba(245,104,15,.55);
+  box-shadow: 0 0 0 3px rgba(245,104,15,.18);
+}
