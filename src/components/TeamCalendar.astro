@@ -1,0 +1,27 @@
+---
+const calendarUrl = "https://teamup.com/ksYOURCALENDARKEY";
+---
+
+<section class="team-calendar">
+  <iframe
+    src={calendarUrl}
+    loading="lazy"
+    referrerpolicy="no-referrer"
+    title="FRC 4961 Team Calendar"
+  ></iframe>
+</section>
+
+<style>
+.team-calendar {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.team-calendar iframe {
+  width: 100%;
+  height: 850px;
+  border: 0;
+  border-radius: 14px;
+  background: #000;
+}
+</style>
