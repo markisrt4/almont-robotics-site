@@ -1,0 +1,317 @@
+---
+/**
+ * Pulls the Teamup ICS feed at build time (Astro static build).
+ * Shows the next 3 upcoming events in a nice card.
+ */
+
+const FEED_URL = "https://ics.teamup.com/feed/ksd5jvzz4ymmpkwusk/0.ics";
+const MAX_EVENTS = 3;
+
+type EventItem = {
+  summary: string;
+  location?: string;
+  start: Date;
+  end?: Date;
+  url?: string;
+};
+
+function parseIcsDate(raw: string): Date | null {
+  // Examples:
+  // 20260121T230000Z
+  // 20260121T180000
+  // 20260121
+  const s = raw.trim();
+
+  // DATE only
+  if (/^\d{8}$/.test(s)) {
+    const y = Number(s.slice(0, 4));
+    const m = Number(s.slice(4, 6)) - 1;
+    const d = Number(s.slice(6, 8));
+    return new Date(y, m, d);
+  }
+
+  // DATE-TIME
+  const m = s.match(/^(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})(Z)?$/);
+  if (!m) return null;
+
+  const y = Number(m[1]);
+  const mo = Number(m[2]) - 1;
+  const d = Number(m[3]);
+  const hh = Number(m[4]);
+  const mm = Number(m[5]);
+  const ss = Number(m[6]);
+  const isUtc = Boolean(m[7]);
+
+  return isUtc ? new Date(Date.UTC(y, mo, d, hh, mm, ss)) : new Date(y, mo, d, hh, mm, ss);
+}
+
+function unfoldLines(text: string): string[] {
+  // ICS line folding: lines starting with space/tab continue previous line
+  const raw = text.replace(/\r\n/g, "\n").split("\n");
+  const out: string[] = [];
+  for (const line of raw) {
+    if ((line.startsWith(" ") || line.startsWith("\t")) && out.length) {
+      out[out.length - 1] += line.slice(1);
+    } else {
+      out.push(line);
+    }
+  }
+  return out;
+}
+
+function getPropValue(line: string): { key: string; value: string } | null {
+  // Handles lines like:
+  // DTSTART;TZID=America/Detroit:20260121T180000
+  // SUMMARY:Wednesday Night Team Meeting
+  const idx = line.indexOf(":");
+  if (idx === -1) return null;
+  const left = line.slice(0, idx);
+  const value = line.slice(idx + 1);
+  const key = left.split(";")[0].toUpperCase();
+  return { key, value };
+}
+
+function parseEvents(icsText: string): EventItem[] {
+  const lines = unfoldLines(icsText);
+
+  const events: EventItem[] = [];
+  let inEvent = false;
+  let cur: Partial<EventItem> = {};
+
+  for (const line of lines) {
+    if (line === "BEGIN:VEVENT") {
+      inEvent = true;
+      cur = {};
+      continue;
+    }
+    if (line === "END:VEVENT") {
+      if (cur.summary && cur.start instanceof Date) {
+        events.push(cur as EventItem);
+      }
+      inEvent = false;
+      cur = {};
+      continue;
+    }
+    if (!inEvent) continue;
+
+    const p = getPropValue(line);
+    if (!p) continue;
+
+    switch (p.key) {
+      case "SUMMARY":
+        cur.summary = p.value.replace(/\\n/g, " ").trim();
+        break;
+      case "LOCATION":
+        cur.location = p.value.replace(/\\n/g, " ").trim();
+        break;
+      case "DTSTART": {
+        const dt = parseIcsDate(p.value);
+        if (dt) cur.start = dt;
+        break;
+      }
+      case "DTEND": {
+        const dt = parseIcsDate(p.value);
+        if (dt) cur.end = dt;
+        break;
+      }
+      case "URL":
+        cur.url = p.value.trim();
+        break;
+      default:
+        break;
+    }
+  }
+
+  return events;
+}
+
+function fmtRange(start: Date, end?: Date) {
+  const dateFmt = new Intl.DateTimeFormat("en-US", { weekday: "short", month: "short", day: "numeric" });
+  const timeFmt = new Intl.DateTimeFormat("en-US", { hour: "numeric", minute: "2-digit" });
+
+  const date = dateFmt.format(start);
+  const startTime = timeFmt.format(start);
+
+  if (!end) return `${date} • ${startTime}`;
+  return `${date} • ${startTime}–${timeFmt.format(end)}`;
+}
+
+let upcoming: EventItem[] = [];
+let fetchError: string | null = null;
+
+try {
+  const res = await fetch(FEED_URL, { headers: { "user-agent": "almont-robotics-site/1.0" } });
+  if (!res.ok) throw new Error(`ICS fetch failed: ${res.status} ${res.statusText}`);
+
+  const text = await res.text();
+  const all = parseEvents(text);
+
+  const now = new Date();
+  upcoming = all
+    .filter((e) => e.start && e.start.getTime() >= now.getTime() - 2 * 60 * 60 * 1000) // allow events that just started
+    .sort((a, b) => a.start.getTime() - b.start.getTime())
+    .slice(0, MAX_EVENTS);
+} catch (e: any) {
+  fetchError = e?.message ?? "Unable to load events.";
+}
+---
+
+<section class="next-wrap" aria-label="Upcoming events">
+  <div class="next-card">
+    <div class="next-head">
+      <div>
+        <div class="kicker">Upcoming</div>
+        <h2>Next Events</h2>
+      </div>
+      <div class="meta">Auto-updates from Teamup</div>
+    </div>
+
+    {fetchError ? (
+      <div class="empty">
+        <div class="empty-title">Couldn’t load events right now</div>
+        <div class="empty-text">{fetchError}</div>
+      </div>
+    ) : upcoming.length === 0 ? (
+      <div class="empty">
+        <div class="empty-title">No upcoming events</div>
+        <div class="empty-text">Check the full calendar for future dates.</div>
+      </div>
+    ) : (
+      <ul class="list">
+        {upcoming.map((e) => (
+          <li class="item">
+            <div class="line1">
+              <div class="summary">{e.summary}</div>
+              <div class="when">{fmtRange(e.start, e.end)}</div>
+            </div>
+            <div class="line2">
+              {e.location ? <span class="loc">📍 {e.location}</span> : <span class="loc muted">📍 Location TBD</span>}
+              {e.url ? (
+                <a class="link" href={e.url} target="_blank" rel="noreferrer">
+                  Details →
+                </a>
+              ) : null}
+            </div>
+          </li>
+        ))}
+      </ul>
+    )}
+  </div>
+</section>
+
+<style>
+.next-wrap{
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 0.6rem 1rem 0;
+}
+
+.next-card{
+  border-radius: 18px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,.10);
+  background: rgba(255,255,255,.04);
+  box-shadow: 0 18px 48px rgba(0,0,0,.35);
+}
+
+.next-head{
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  gap: 1rem;
+  padding: 0.95rem 1rem 0.75rem;
+  background: rgba(7,9,7,.70);
+  border-bottom: 1px solid rgba(255,255,255,.08);
+  backdrop-filter: blur(8px);
+}
+
+.kicker{
+  color: rgba(255,255,255,.70);
+  font-weight: 900;
+  letter-spacing: .2px;
+  font-size: .9rem;
+  margin-bottom: .2rem;
+}
+.next-head h2{
+  margin: 0;
+  color: rgba(255,255,255,.93);
+  font-size: 1.15rem;
+  letter-spacing: .2px;
+}
+.meta{
+  color: rgba(255,255,255,.65);
+  font-weight: 800;
+  font-size: .9rem;
+  white-space: nowrap;
+}
+
+.list{
+  list-style:none;
+  margin: 0;
+  padding: 0.35rem;
+}
+
+.item{
+  border: 1px solid rgba(255,255,255,.10);
+  background: rgba(255,255,255,.03);
+  border-radius: 16px;
+  padding: 0.8rem 0.85rem;
+  margin: 0.55rem;
+}
+
+.line1{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:baseline;
+  justify-content:space-between;
+  gap: .6rem;
+}
+.summary{
+  color: rgba(255,255,255,.94);
+  font-weight: 900;
+}
+.when{
+  color: rgba(255,255,255,.72);
+  font-weight: 800;
+}
+
+.line2{
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:space-between;
+  gap: .6rem;
+  margin-top: .45rem;
+}
+.loc{
+  color: rgba(255,255,255,.78);
+  font-weight: 800;
+}
+.muted{ opacity: .7; }
+
+.link{
+  color: rgba(255,255,255,.92);
+  font-weight: 900;
+  text-decoration:none;
+  padding: .35rem .55rem;
+  border-radius: 12px;
+  border: 1px solid rgba(245,104,15,.40);
+  background: rgba(245,104,15,.10);
+}
+.link:hover{
+  border-color: rgba(65,154,67,.45);
+  background: rgba(65,154,67,.10);
+}
+
+.empty{
+  padding: 1rem;
+}
+.empty-title{
+  color: rgba(255,255,255,.92);
+  font-weight: 900;
+}
+.empty-text{
+  color: rgba(255,255,255,.70);
+  font-weight: 700;
+  margin-top: .25rem;
+}
+</style>

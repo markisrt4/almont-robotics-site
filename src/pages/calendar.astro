@@ -1,5 +1,7 @@
 ---
 import Layout from "../layouts/BaseLayout.astro";
+import NextEvents from "../components/NextEvents.astro";
+import CalendarActions from "../components/CalendarActions.astro";
 import TeamCalendarEmbed from "../components/TeamCalendarEmbed.astro";
 ---
 
@@ -9,11 +11,11 @@ import TeamCalendarEmbed from "../components/TeamCalendarEmbed.astro";
 >
   <section class="page-header">
     <h1>Team Calendar</h1>
-    <p>
-      Meetings, competitions, outreach events, and important deadlines.
-    </p>
+    <p>Meetings, competitions, outreach events, and important deadlines.</p>
   </section>
 
+  <NextEvents />
+  <CalendarActions />
   <TeamCalendarEmbed />
 </Layout>
 
@@ -21,16 +23,18 @@ import TeamCalendarEmbed from "../components/TeamCalendarEmbed.astro";
 .page-header {
   max-width: 1180px;
   margin: 0 auto;
-  padding: 1.2rem 1rem 0.5rem;
+  padding: 1.2rem 1rem 0.65rem;
 }
 
 .page-header h1 {
   margin: 0;
   color: rgba(255,255,255,0.95);
+  letter-spacing: .2px;
 }
 
 .page-header p {
-  margin: 0.4rem 0 0;
+  margin: 0.45rem 0 0;
   color: rgba(255,255,255,0.7);
+  font-weight: 700;
 }
 </style>
