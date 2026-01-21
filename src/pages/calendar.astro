@@ -9,32 +9,109 @@ import TeamCalendarEmbed from "../components/TeamCalendarEmbed.astro";
   title="Calendar"
   description="Meetings, competitions, outreach, and deadlines for Almont Robotics FRC Team 4961."
 >
-  <section class="page-header">
-    <h1>Team Calendar</h1>
-    <p>Meetings, competitions, outreach events, and important deadlines.</p>
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-overlay"></div>
+    <div class="container hero-inner">
+      <div class="hero-card">
+        <span class="badge">
+          <span style="width:.55rem;height:.55rem;border-radius:99px;background:var(--orange);display:inline-block;"></span>
+          <span style="width:.55rem;height:.55rem;border-radius:99px;background:var(--green);display:inline-block;"></span>
+          <span>FRC 4961 · Team Schedule</span>
+        </span>
+
+        <h1 class="h1">
+          Team <span class="accent">Calendar</span>
+        </h1>
+
+        <p class="p">
+          All meetings, competitions, outreach events, and deadlines — automatically kept
+          up to date for students, parents, and mentors.
+        </p>
+
+        <div class="btnrow">
+          <a
+            class="btn primary"
+            href="https://teamup.com/ksd5jvzz4ymmpkwusk"
+            target="_blank"
+            rel="noreferrer"
+          >
+            Open Full Calendar
+          </a>
+          <a class="btn" href="#upcoming">
+            View Upcoming Events
+          </a>
+        </div>
+      </div>
+    </div>
   </section>
 
-  <NextEvents />
-  <CalendarActions />
-  <TeamCalendarEmbed />
+  <!-- UPCOMING EVENTS -->
+  <section id="upcoming" class="section">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <div class="kicker">What’s next</div>
+          <h2 class="h2">Upcoming Events</h2>
+        </div>
+      </div>
+
+      <NextEvents />
+    </div>
+  </section>
+
+  <!-- CALENDAR ACTIONS -->
+  <section class="section section-actions">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <div class="kicker">Stay in sync</div>
+          <h2 class="h2">Calendar Options</h2>
+        </div>
+      </div>
+
+      <CalendarActions />
+    </div>
+  </section>
+
+  <!-- EMBEDDED CALENDAR -->
+  <section class="section">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <div class="kicker">Full view</div>
+          <h2 class="h2">Complete Schedule</h2>
+        </div>
+      </div>
+
+      <TeamCalendarEmbed />
+    </div>
+  </section>
+
+  <style>
+    /* Minor page-specific polish using existing tokens */
+
+    .section-head{
+      display:flex;
+      align-items:flex-end;
+      justify-content:space-between;
+      gap:1rem;
+      margin-bottom: 1rem;
+    }
+
+    .section-actions{
+      padding-top: 1.2rem;
+      padding-bottom: 1.2rem;
+      background:
+        radial-gradient(700px 260px at 15% 0%, rgba(245,104,15,.12), transparent 60%),
+        radial-gradient(700px 260px at 85% 0%, rgba(65,154,67,.12), transparent 60%);
+      border-top: 1px solid rgba(255,255,255,.06);
+      border-bottom: 1px solid rgba(255,255,255,.06);
+    }
+
+    /* Anchor offset so “View Upcoming Events” doesn’t hide under sticky nav */
+    #upcoming{
+      scroll-margin-top: 5rem;
+    }
+  </style>
 </Layout>
-
-<style>
-.page-header {
-  max-width: 1180px;
-  margin: 0 auto;
-  padding: 1.2rem 1rem 0.65rem;
-}
-
-.page-header h1 {
-  margin: 0;
-  color: rgba(255,255,255,0.95);
-  letter-spacing: .2px;
-}
-
-.page-header p {
-  margin: 0.45rem 0 0;
-  color: rgba(255,255,255,0.7);
-  font-weight: 700;
-}
-</style>
