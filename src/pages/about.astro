@@ -1,117 +1,57 @@
 ---
-import Layout from "../layouts/BaseLayout.astro";
-import NextEvents from "../components/NextEvents.astro";
-import CalendarActions from "../components/CalendarActions.astro";
-import TeamCalendarEmbed from "../components/TeamCalendarEmbed.astro";
+import BaseLayout from "../layouts/BaseLayout.astro";
+const base = import.meta.env.BASE_URL;
 ---
 
-<Layout
-  title="Calendar"
-  description="Meetings, competitions, outreach, and deadlines for Almont Robotics FRC Team 4961."
+<BaseLayout
+  title="About"
+  description="About Almont Robotics (FRC 4961) — a student-led FIRST Robotics Competition team."
 >
-  <!-- HERO -->
-  <section class="hero">
-    <div class="hero-overlay"></div>
-    <div class="container hero-inner">
-      <div class="hero-card">
-        <span class="badge">
-          <span style="width:.55rem;height:.55rem;border-radius:99px;background:var(--orange);display:inline-block;"></span>
-          <span style="width:.55rem;height:.55rem;border-radius:99px;background:var(--green);display:inline-block;"></span>
-          <span>FRC 4961 · Team Schedule</span>
-        </span>
-
-        <h1 class="h1">
-          Team <span class="accent">Calendar</span>
-        </h1>
-
-        <p class="p">
-          All meetings, competitions, outreach events, and deadlines — automatically kept
-          up to date for students, parents, and mentors.
-        </p>
-
-        <div class="btnrow">
-          <a
-            class="btn primary"
-            href="https://teamup.com/ksd5jvzz4ymmpkwusk"
-            target="_blank"
-            rel="noreferrer"
-          >
-            Open Full Calendar
-          </a>
-          <a class="btn" href="#upcoming">
-            View Upcoming Events
-          </a>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- UPCOMING EVENTS -->
-  <section id="upcoming" class="section">
-    <div class="container">
-      <div class="section-head">
-        <div>
-          <div class="kicker">What’s next</div>
-          <h2 class="h2">Upcoming Events</h2>
-        </div>
-      </div>
-
-      <NextEvents />
-    </div>
-  </section>
-
-  <!-- CALENDAR ACTIONS -->
-  <section class="section section-actions">
-    <div class="container">
-      <div class="section-head">
-        <div>
-          <div class="kicker">Stay in sync</div>
-          <h2 class="h2">Calendar Options</h2>
-        </div>
-      </div>
-
-      <CalendarActions />
-    </div>
-  </section>
-
-  <!-- EMBEDDED CALENDAR -->
   <section class="section">
     <div class="container">
-      <div class="section-head">
-        <div>
-          <div class="kicker">Full view</div>
-          <h2 class="h2">Complete Schedule</h2>
+      <div class="kicker">About</div>
+      <h1 class="h1">Almont Robotics <span class="accent">FRC 4961</span></h1>
+
+      <p class="p" style="max-width: 70ch;">
+        Team 4961 is entirely student-led, with every design, build, and decision being made by our team's members.
+        From brainstorming to building, the Almont Robotics Team runs on student ideas, creativity, and problem-solving.
+      </p>
+
+      <div class="hr"></div>
+
+      <div class="grid3">
+        <div class="card" style="padding:1.15rem;">
+          <div class="kicker" style="color:rgba(245,104,15,.95);">Student-led</div>
+          <p class="p">Students plan, prototype, build, test, iterate, and present—learning leadership along the way.</p>
+        </div>
+        <div class="card" style="padding:1.15rem;">
+          <div class="kicker" style="color:rgba(65,154,67,.95);">Hands-on STEM</div>
+          <p class="p">CAD, machining, wiring, code, strategy, media, and outreach—there’s a role for everyone.</p>
+        </div>
+        <div class="card" style="padding:1.15rem;">
+          <div class="kicker">Gracious Professionalism</div>
+          <p class="p">We compete hard, help others, and represent Almont with respect and pride.</p>
         </div>
       </div>
 
-      <TeamCalendarEmbed />
+      <div style="margin-top:1.2rem;" class="card">
+        <div style="display:grid; grid-template-columns: 1.2fr .8fr; gap:1rem; padding:1rem;">
+          <div>
+            <h2 class="h2" style="margin-top:.15rem;">Our slogan</h2>
+            <p class="p" style="font-size:1.15rem; color:rgba(255,255,255,.86);">
+              “Student-driven. Student-built. Team-powered.”
+            </p>
+            <div class="btnrow">
+              <a class="btn primary" href={`${base}contact/`}>How to Join</a>
+              <a class="btn" href={`${base}sponsors/`}>Sponsor Us</a>
+            </div>
+          </div>
+
+          <div class="tile" style="border-radius: var(--radius);">
+            <img src={`${base}photos/208A3511.jpg`} alt="Student in the pits giving thumbs up" loading="lazy" />
+          </div>
+        </div>
+      </div>
     </div>
   </section>
-
-  <style>
-    /* Minor page-specific polish using existing tokens */
-
-    .section-head{
-      display:flex;
-      align-items:flex-end;
-      justify-content:space-between;
-      gap:1rem;
-      margin-bottom: 1rem;
-    }
-
-    .section-actions{
-      padding-top: 1.2rem;
-      padding-bottom: 1.2rem;
-      background:
-        radial-gradient(700px 260px at 15% 0%, rgba(245,104,15,.12), transparent 60%),
-        radial-gradient(700px 260px at 85% 0%, rgba(65,154,67,.12), transparent 60%);
-      border-top: 1px solid rgba(255,255,255,.06);
-      border-bottom: 1px solid rgba(255,255,255,.06);
-    }
-
-    /* Anchor offset so “View Upcoming Events” doesn’t hide under sticky nav */
-    #upcoming{
-      scroll-margin-top: 5rem;
-    }
-  </style>
-</Layout>
+</BaseLayout>
