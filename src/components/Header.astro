@@ -9,17 +9,20 @@ const links = [
   { href: "media/", label: "Media" },
   { href: "sponsors/", label: "Sponsors" },
   { href: "contact/", label: "Contact" },
-  { href: "https://wiki.almontrobotics.com", label: "Login" },
+  { href: "https://wiki.almontrobotics.com", label: "Login", external: true },
 ];
 
 // Normalize BASE_URL + pathname so "active" works on GitHub Pages subpaths too.
 const basePath = base.endsWith("/") ? base : `${base}/`;
-const path = Astro.url.pathname; // e.g. "/frc4961/calendar/" or "/calendar/"
+const path = Astro.url.pathname; // e.g. "/almont-robotics-site/calendar/" or "/calendar/"
+
+const isExternal = (href: string) => /^https?:\/\//i.test(href);
+
+const resolveHref = (href: string) => (isExternal(href) ? href : `${base}${href}`);
 
 const isActive = (href: string) => {
-  // Build the expected pathname for this link
-  const full = new URL(href, `https://x.invalid${basePath}`).pathname; // ensures proper joining
-  // Treat home as active only on the exact basePath (not on every page)
+  if (isExternal(href)) return false; // external links are never "active"
+  const full = new URL(href, `https://x.invalid${basePath}`).pathname;
   if (href === "") return path === basePath;
   return path === full;
 };
@@ -36,7 +39,12 @@ const isActive = (href: string) => {
     <!-- Desktop Nav -->
     <nav class="navlinks desktop" aria-label="Primary navigation">
       {links.map((l) => (
-        <a href={`${base}${l.href}`} class:list={{ active: isActive(l.href) }}>
+        <a
+          href={resolveHref(l.href)}
+          class:list={{ active: isActive(l.href) }}
+          target={isExternal(l.href) ? "_blank" : undefined}
+          rel={isExternal(l.href) ? "noopener noreferrer" : undefined}
+        >
           {l.label}
         </a>
       ))}
@@ -65,8 +73,10 @@ const isActive = (href: string) => {
   <nav class="mobile-menu" id="mobile-menu" aria-label="Mobile navigation">
     {links.map((l) => (
       <a
-        href={`${base}${l.href}`}
+        href={resolveHref(l.href)}
         class:list={{ active: isActive(l.href) }}
+        target={isExternal(l.href) ? "_blank" : undefined}
+        rel={isExternal(l.href) ? "noopener noreferrer" : undefined}
         onclick="(function(a){
           const nav=a.closest('.nav');
           nav.classList.remove('open');
